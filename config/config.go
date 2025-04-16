@@ -38,18 +38,10 @@ func (cfg *CFG) Load(path string) {
 		})
 	}
 
-	if len(cfg.API.MainPath) < 1 {
+	if len(cfg.API.Path) < 1 {
 
 		appLog.Add(logging.Entry{
-			Event: fmt.Sprintf("Invalid API Main Path - too short - '%s'", buffCfg.API.MainPath),
-			Exit:  true,
-		})
-	}
-
-	if len(cfg.API.MetricsPath) < 1 {
-
-		appLog.Add(logging.Entry{
-			Event: fmt.Sprintf("Invalid API Metrics Path - too short - '%s'", buffCfg.API.MetricsPath),
+			Event: fmt.Sprintf("Invalid API Main Path - too short - '%s'", buffCfg.API.Path),
 			Exit:  true,
 		})
 	}

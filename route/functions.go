@@ -18,10 +18,10 @@ func (obj MuxObj) HandleFuncCustom(pattern string, handler func(http.ResponseWri
 
 	//http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 
-	if obj.Config.API.MainPath == "/" {
+	if pattern == "/" {
 
-		obj.Config.API.MainPath = ""
+		pattern = ""
 	}
 
-	obj.Mux.Handle(obj.Config.API.MainPath+pattern, HandlerFuncCustom(handler))
+	obj.Mux.Handle(pattern, HandlerFuncCustom(handler))
 }

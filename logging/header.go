@@ -30,10 +30,9 @@ type Log struct {
 }
 type Entry struct {
 	Event   string
-	Code    *int
+	Code    int
 	Err     error
 	Trigger string
 	EventID error
-	UserID  int64
 	Exit    bool
 }

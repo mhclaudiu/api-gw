@@ -4,9 +4,10 @@ import (
 	"api-gw/config"
 	"api-gw/cron"
 	"api-gw/functions"
+	"api-gw/jwt"
 	"api-gw/logging"
+	"api-gw/metrics"
 	"api-gw/route"
-	"api-gw/stats"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,12 +15,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/dustin/go-humanize"
 	"github.com/fatih/color"
 	"github.com/rs/cors"
-	"github.com/shirou/gopsutil/v3/cpu"
-	"github.com/shirou/gopsutil/v3/host"
-	"github.com/shirou/gopsutil/v3/mem"
 )
 
 const (
@@ -28,8 +25,8 @@ const (
 
 type App struct {
 	Cron   *cron.Init
-	Stats  *stats.StatsObj
-	Info   *stats.InfoObj
+	Stats  *metrics.StatsObj
+	Info   *metrics.InfoObj
 	Log    logging.Log
 	Config config.CFG
 }
@@ -102,7 +99,7 @@ func (app *App) StartWebAPI() {
 
 	}()
 
-	muxObj.Register(app.Stats, app.Info, app.Cron)
+	muxObj.Register(app.Stats, app.Info)
 }
 
 func (app *App) LoadCRONs() {
@@ -113,41 +110,28 @@ func (app *App) LoadCRONs() {
 	app.Cron.Add("QueryStats", func() error { app.Stats.Query(app.Info); return nil }, "5s", true)
 }
 
-func (app *App) InitMaps() {
+func (app *App) MetricsInit() {
 
-	app.Stats = &stats.StatsObj{}
-	app.Info = &stats.InfoObj{}
+	app.Info = &metrics.InfoObj{}
+	app.Stats = &metrics.StatsObj{}
 }
 
-func (app *App) InitInfo() {
+func (app *App) GenerateTestToken() {
 
-	cpuInfo, _ := cpu.Info()
+	if app.Config.API.Auth {
 
-	memory, _ := mem.VirtualMemory()
+		token, err := jwt.CreateToken()
 
-	hostInfo, _ := host.Info()
+		if err != nil {
 
-	app.Info = &stats.InfoObj{
+			app.Log.Add(logging.Entry{
+				Event: fmt.Sprintf("Test Token Error: %s", err.Error()),
+			})
 
-		CPU: stats.INFOxCPU{
-			Cores: fmt.Sprint(cpuInfo[0].Cores),
-			Freq:  fmt.Sprintf("%.0f MHz", cpuInfo[0].Mhz),
-			Model: fmt.Sprint(cpuInfo[0].ModelName),
-		},
-		MEM: stats.INFOxMEM{
-			Total: humanize.Bytes(memory.Total),
-		},
-		HOST: stats.INFOxHOST{
-			Name:            hostInfo.Hostname,
-			OS:              hostInfo.OS,
-			Platform:        hostInfo.Platform,
-			PlatformVersion: hostInfo.PlatformVersion,
-			KernelVersion:   hostInfo.KernelVersion,
-			KernelArch:      hostInfo.KernelArch,
-			Uptime:          functions.FormatUptime(int(hostInfo.Uptime)),
-			Proccesses:      fmt.Sprint(hostInfo.Procs),
-		},
+		} else {
+			app.Log.Add(logging.Entry{
+				Event: fmt.Sprintf("Generated Test Token: %s", token),
+			})
+		}
 	}
-
-	//app.Info.StartUptime()
 }

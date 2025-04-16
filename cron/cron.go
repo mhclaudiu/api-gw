@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"api-gw/functions"
 	"api-gw/logging"
 )
 
@@ -88,7 +87,7 @@ func (cron *Cron) Start(ci *Init) {
 
 		logObj.Add(logging.Entry{
 			Event: fmt.Sprintf("'%s' already running - every '%s'", cron.Name, cron.IntervalS),
-			Code:  functions.PointerTo(logging.CONST_CODE_WARNING),
+			Code:  logging.CONST_CODE_WARNING,
 		})
 
 		return
@@ -123,7 +122,7 @@ func (cron *Cron) Loop(ci *Init) {
 
 			logObj.Add(logging.Entry{
 				Event: fmt.Sprintf("'%s' did not yet finished execution ..", cron.Name),
-				Code:  functions.PointerTo(logging.CONST_CODE_WARNING),
+				Code:  logging.CONST_CODE_WARNING,
 			})
 
 			return
@@ -144,7 +143,7 @@ func (cron *Cron) Exec(ci *Init) {
 
 		logObj.Add(logging.Entry{
 			Err:  err,
-			Code: functions.PointerTo(logging.CONST_CODE_ERROR),
+			Code: logging.CONST_CODE_ERROR,
 		})
 	}
 
@@ -157,7 +156,7 @@ func (cron *Cron) Stop(ci *Init) {
 
 		logObj.Add(logging.Entry{
 			Event: fmt.Sprintf("'%s' already stopped ..", cron.Name),
-			Code:  functions.PointerTo(logging.CONST_CODE_WARNING),
+			Code:  logging.CONST_CODE_WARNING,
 		})
 
 		return
@@ -179,7 +178,7 @@ func (ci *Init) Update(name, period string) {
 
 		logObj.Add(logging.Entry{
 			Event: fmt.Sprintf("'%s' does not exist..", name),
-			Code:  functions.PointerTo(logging.CONST_CODE_WARNING),
+			Code:  logging.CONST_CODE_WARNING,
 		})
 
 		return
@@ -210,7 +209,7 @@ func (ci *Init) Update(name, period string) {
 
 		logObj.Add(logging.Entry{
 			Event: fmt.Sprintf("Updating '%s' from '%s' to '%s'", cron.Name, cron.IntervalS, period),
-			Code:  functions.PointerTo(logging.CONST_CODE_INFO),
+			Code:  logging.CONST_CODE_INFO,
 		})
 
 		cron.IntervalF = f64

@@ -1,9 +1,9 @@
-package stats
+package metrics
 
 type STATSxOBJ struct {
 	CPU  STATSxCPU
 	MEM  STATSxMEM
-	Time string
+	Time string `json:"-"`
 }
 
 type INFOxOBJ struct {

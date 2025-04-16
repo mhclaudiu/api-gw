@@ -1,9 +1,8 @@
-package stats
+package metrics
 
 import (
 	"api-gw/functions"
 	"fmt"
-	"log"
 	"math"
 	"time"
 
@@ -59,7 +58,10 @@ func (s *StatsObj) Query(info *InfoObj) {
 	hostInfo, _ := host.Info()
 
 	//info.HOST.Uptime = functions.FormatUptime(int(hostInfo.Uptime))
-	info.HOST.Proccesses = fmt.Sprint(hostInfo.Procs)
+	if info != nil {
+
+		info.HOST.Proccesses = fmt.Sprint(hostInfo.Procs)
+	}
 
 	*s = StatsObj{
 
@@ -79,16 +81,13 @@ func (s *StatsObj) Query(info *InfoObj) {
 		},
 		Time: time.Now().Format("2006-01-02 15:04:05"),
 	}
-
-	log.Print(*s)
-
 }
 
 func (i *InfoObj) StartUptime() {
 
 	go func() {
 
-		for true {
+		for {
 
 			appUptime++
 
@@ -98,30 +97,6 @@ func (i *InfoObj) StartUptime() {
 			i.HOST.Uptime = functions.FormatUptime(int(hostInfo.Uptime))
 
 			time.Sleep(1 * time.Second)
-		}
-	}()
-
-	go func() {
-
-		for true {
-
-			cpuUsage, _ := cpu.Percent(time.Second, false)
-
-			cpuAvg, _ := load.Avg()
-
-			memory, _ := mem.VirtualMemory()
-
-			i.CPU.Usage = fmt.Sprint(math.Ceil(cpuUsage[0]))
-			i.CPU.Load = fmt.Sprintf("%.3f %.3f %.3f", cpuAvg.Load1, cpuAvg.Load5, cpuAvg.Load15)
-
-			i.MEM.Usage = fmt.Sprint(math.Ceil(memory.UsedPercent))
-			i.MEM.Available = fmt.Sprint(humanize.Bytes(memory.Available))
-			i.MEM.Cached = fmt.Sprint(humanize.Bytes(memory.Cached))
-			i.MEM.Free = fmt.Sprint(humanize.Bytes(memory.Free))
-			i.MEM.Active = fmt.Sprint(humanize.Bytes(memory.Active))
-			i.MEM.Buffers = fmt.Sprint(humanize.Bytes(memory.Buffers))
-			i.MEM.Inactive = fmt.Sprint(humanize.Bytes(memory.Inactive))
-			i.MEM.Used = fmt.Sprint(humanize.Bytes(memory.Used))
 		}
 	}()
 }

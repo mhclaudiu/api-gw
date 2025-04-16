@@ -1,7 +1,6 @@
 package logging
 
 import (
-	"api-gw/functions"
 	"fmt"
 	"log"
 	"os"
@@ -20,7 +19,7 @@ func (l *Log) Add(data Entry) error {
 
 		data.Event = data.Err.Error()
 
-		data.Code = functions.PointerTo(CONST_CODE_ERROR)
+		data.Code = CONST_CODE_ERROR
 	}
 
 	if (len(data.Event)) < 2 {
@@ -55,19 +54,17 @@ func (l *Log) Add(data Entry) error {
 
 	noCode := false
 
-	if data.Code == nil {
-
-		data.Code = functions.PointerTo(0)
+	if data.Code == 0 {
 
 		noCode = true
 	}
 
-	if eventID := l.ProcessEventID(&data.Event, *data.Code); eventID != nil {
+	if eventID := l.ProcessEventID(&data.Event, data.Code); eventID != nil {
 
 		data.EventID = eventID
 	}
 
-	code := GetSeverity(*data.Code)
+	code := GetSeverity(data.Code)
 
 	/*if data.Code != nil {
 
@@ -109,7 +106,7 @@ func (l *Log) Add(data Entry) error {
 
 	} else {
 
-		if *data.Code == 0 {
+		if data.Code == 0 {
 
 			colorType = color.FgHiMagenta
 		}

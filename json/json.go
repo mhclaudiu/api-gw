@@ -28,11 +28,11 @@ func (h APIxOBJ_Handler) Write2(w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(h.Data)
 }
 
-func Write(w http.ResponseWriter, data interface{}) {
+func Write(w http.ResponseWriter, data interface{}, code int) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	w.WriteHeader(http.StatusCreated) //http.StatusOK
+	w.WriteHeader(code) //http.StatusOK
 
 	json.NewEncoder(w).Encode(data)
 }
