@@ -17,18 +17,19 @@ A high-performance, scalable API Gateway built in Go, designed for microservices
 - Docker (optional)
 
 ### Running Locally
-
+```bash
 go run .
-
+```
 ### Running on Docker
-
+```bash
 docker build -t api-gw .
 docker run -p 8080:8080 api-gw
-
+```
 ### Run Tests
-
+```bash
 go run ./tests
-
+```
 ### Example Request
-
+```bash
 curl -H "Authorization: Bearer <token>" http://<host>:<port>/<path>
+```
