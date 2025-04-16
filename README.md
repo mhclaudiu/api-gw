@@ -18,6 +18,7 @@ A high-performance, scalable API Gateway built in Go, designed for microservices
 
 ### Running Locally
 
+```bash
 go run .
 
 ### Running on Docker
