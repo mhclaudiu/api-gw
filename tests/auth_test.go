@@ -14,7 +14,7 @@ func TestJWTAuth(t *testing.T) {
 		w.WriteHeader(http.StatusCreated)
 	}, true)
 
-	t.Run("No Token", func(t *testing.T) {
+	t.Run("No JWT Token", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/", nil)
 		rr := httptest.NewRecorder()
 
@@ -25,7 +25,7 @@ func TestJWTAuth(t *testing.T) {
 		}
 	})
 
-	t.Run("Invalid Token", func(t *testing.T) {
+	t.Run("Invalid JWT Token", func(t *testing.T) {
 
 		req := httptest.NewRequest("GET", "/", nil)
 		req.Header.Set("Authorization", "Bearer test")
@@ -38,10 +38,10 @@ func TestJWTAuth(t *testing.T) {
 		}
 	})
 
-	t.Run("Valid Token", func(t *testing.T) {
+	t.Run("Valid JWT Token", func(t *testing.T) {
 
 		token, _ := jwt.CreateToken()
-		req := httptest.NewRequest("GET", "/api/metrics", nil)
+		req := httptest.NewRequest("GET", "/", nil)
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 		rr := httptest.NewRecorder()
 
