@@ -16,7 +16,7 @@ Scalable API Gateway built in Go, designed for microservices. It features:
 - Go 1.22+
 - Docker (optional)
 
-### Running & Compile Locally
+### Run & Compile Locally
 
 - Configuration file: api-gw.conf
 ```bash
