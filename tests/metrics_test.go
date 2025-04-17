@@ -61,7 +61,7 @@ func TestMetrics(t *testing.T) {
 		var req *http.Request
 		var rr *httptest.ResponseRecorder
 
-		for i := 0; i <= objHandler.RateLimit.BurstRate; i++ {
+		for i := 0; i <= objHandler.RateLimit.BurstRate+2; i++ {
 
 			req = httptest.NewRequest("GET", "/", nil)
 			rr = httptest.NewRecorder()
