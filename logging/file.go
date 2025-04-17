@@ -11,10 +11,10 @@ func (data *FILExOBJ) New() {
 
 	fileLogger = &lumberjack.Logger{
 		Filename:   fmt.Sprintf("%s/%s.json", data.Path, time.Now().Format("2006-01-02")),
-		MaxSize:    data.MaxSize, // megabytes
+		MaxSize:    data.MaxSize, // Megabytes
 		MaxBackups: 1,
-		MaxAge:     data.MaxDays, // days
-		Compress:   false,        // enabled compression
+		MaxAge:     data.MaxDays, // Days
+		Compress:   false,        // Enable compression
 	}
 
 }
