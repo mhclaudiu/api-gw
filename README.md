@@ -6,7 +6,7 @@ A high-performance, scalable API Gateway built in Go, designed for microservices
 - JWT authentication
 - Rate limiting
 - Docker containerization (optional)
-- Modular architecture (easy to extend/replace)
+- Modular architecture (easy to extend/modify)
 - Unit testing
 
 ## Setup & Usage
