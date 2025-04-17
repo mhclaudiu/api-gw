@@ -1,5 +1,7 @@
 package metrics
 
+import "api-gw/logging"
+
 type STATSxOBJ struct {
 	CPU  STATSxCPU
 	MEM  STATSxMEM
@@ -69,3 +71,24 @@ type InfoObj INFOxOBJ
 var appUptime int
 
 type StatsObj STATSxOBJ
+
+var logFile logging.FILExOBJ
+
+type FILExOBJ struct {
+	MaxSize int
+	MaxDays int
+	Path    string
+	Enabled bool
+}
+
+type OBJxMetrics struct {
+	Stats StatsObj `json:"Stats"`
+	Info  InfoObj  `json:"Info"`
+}
+
+type OBJxMetrics_Json struct {
+	Metrics OBJxMetrics `json:"Metrics"`
+	Updated string      `json:"Updated"`
+}
+
+var appLog logging.Log

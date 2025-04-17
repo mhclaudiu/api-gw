@@ -50,8 +50,34 @@ func (cfg *CFG) Load(path string) {
 		Event: fmt.Sprintf("Succesfully loaded config file '%s':\n%+v\n", path, functions.Dump(cfg)),
 	})
 
+	if cfg.LOG.Enabled {
+
+		cfg.CreateLogsDir()
+	}
 }
 
 func (cfg *CFG) Update(ss CFG) {
 	*cfg = ss
+}
+
+func (cfg *CFG) CreateLogsDir() {
+
+	if _, err := os.Stat(cfg.LOG.Dir); !os.IsNotExist(err) {
+		return
+	}
+
+	err := os.MkdirAll(cfg.LOG.Dir, 0755)
+	if err != nil {
+
+		appLog.Add(logging.Entry{
+			Event: fmt.Sprintf("Error creating Logs Directory '%s' - %s", cfg.LOG.Dir, err.Error()),
+			Code:  logging.CONST_CODE_ERROR,
+			Exit:  true,
+		})
+	}
+
+	appLog.Add(logging.Entry{
+		Event: fmt.Sprintf("Logs Directory '%s' successfully created", cfg.LOG.Dir),
+		Code:  logging.CONST_CODE_INFO,
+	})
 }

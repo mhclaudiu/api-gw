@@ -3,6 +3,8 @@ package logging
 import (
 	"context"
 	"sync"
+
+	"github.com/natefinch/lumberjack"
 )
 
 const (
@@ -36,3 +38,12 @@ type Entry struct {
 	EventID error
 	Exit    bool
 }
+
+type FILExOBJ struct {
+	MaxSize int
+	MaxDays int
+	Path    string
+	Enabled bool
+}
+
+var fileLogger *lumberjack.Logger

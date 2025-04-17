@@ -25,9 +25,16 @@ func main() {
 	//app.Metrics.Init()
 	app.Info.StartUptime()
 
+	metrics.Init(metrics.FILExOBJ{
+		MaxSize: app.Config.LOG.MaxSize,
+		MaxDays: app.Config.LOG.MaxDays,
+		Path:    app.Config.LOG.Dir,
+		Enabled: app.Config.LOG.Enabled,
+	})
+
 	app.Info.Init()
 
-	app.Stats.Query(nil)
+	app.Stats.Query(app.Info)
 
 	app.StartWebAPI()
 

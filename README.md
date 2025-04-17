@@ -16,9 +16,12 @@ A high-performance, scalable API Gateway built in Go, designed for microservices
 - Go 1.22+
 - Docker (optional)
 
-### Running Locally
+### Running & Compile Locally
+
+- Configuration file: api-gw.conf
 ```bash
 go run .
+go build -o api-gw . && chmod +x api-gw && ./api-gw
 ```
 ### Running on Docker
 ```bash
@@ -27,7 +30,7 @@ docker run -p 8080:8080 api-gw
 ```
 ### Run Tests
 ```bash
-go run ./tests
+cd tests && go test
 ```
 ### Example Request
 ```bash

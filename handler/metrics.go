@@ -9,66 +9,24 @@ import (
 	"time"
 )
 
-func (h APIxOBJ_Handler) QueryMetrics(w http.ResponseWriter, r *http.Request) {
+func (h *APIxOBJ_Handler) QueryMetrics(w http.ResponseWriter, r *http.Request) {
 
 	tStart := time.Now()
 
 	h.ClientAddr = functions.RemoteHost(r)
 
-	val, res := client[h.ClientAddr]
-
 	totalRequests++
 
 	user := r.Context().Value("user")
+	if user == nil {
+		user = "N/A"
+	}
 
-	if res {
+	h.User = user.(string)
 
-		if (h.RateLimit.BurstRate > 0 && h.RateLimit.Seconds > 0) && (time.Since(val.Stamp) <= time.Duration(h.RateLimit.Seconds)*time.Second) {
+	if h.LimitRate(w, tStart) {
 
-			client[h.ClientAddr].Update(ClientxOBJ{
-				Stamp:          tStart,
-				Requests:       val.Requests + 1,
-				ClientRequests: val.ClientRequests + 1,
-			})
-
-			if val.Requests > h.RateLimit.BurstRate {
-
-				json.Write(w, APIxOBJ_Json_Status_Rsp{
-					Status: APIxOBJ_Json_Status{
-						Err: true,
-						Msg: "Sorry .. Rate limit exceeded .. Let's cooldown a bit ..",
-					},
-				}, http.StatusTooManyRequests)
-
-				h.Log.Add(logging.Entry{
-					Event: fmt.Sprintf("Client: %s - User: %s | Rate limit exceeded", h.ClientAddr, user),
-					Code:  logging.CONST_CODE_WARNING,
-				})
-
-				client[h.ClientAddr].Update(ClientxOBJ{
-					Stamp:          tStart,
-					Requests:       val.Requests,
-					ClientRequests: val.ClientRequests,
-				})
-
-				return
-			}
-		} else {
-
-			client[h.ClientAddr].Update(ClientxOBJ{
-				Stamp:          tStart,
-				Requests:       1,
-				ClientRequests: val.ClientRequests + 1,
-			})
-		}
-	} else {
-
-		client.Add(ClientxOBJ{
-			ClientAddr:     h.ClientAddr,
-			Stamp:          tStart,
-			Requests:       1,
-			ClientRequests: 1,
-		})
+		return
 	}
 
 	rsp := APIxOBJ_Json_Rsp{}
@@ -97,4 +55,61 @@ func (h APIxOBJ_Handler) QueryMetrics(w http.ResponseWriter, r *http.Request) {
 		TotalRequests:  totalRequests,
 		TotalClients:   len(client),
 	}
+}
+
+func (h *APIxOBJ_Handler) LimitRate(w http.ResponseWriter, tStart time.Time) bool {
+
+	val, res := client[h.ClientAddr]
+
+	if res {
+
+		if (h.RateLimit.BurstRate > 0 && h.RateLimit.Seconds > 0) && (time.Since(val.Stamp) <= time.Duration(h.RateLimit.Seconds)*time.Second) {
+
+			client[h.ClientAddr].Update(ClientxOBJ{
+				Stamp:          tStart,
+				Requests:       val.Requests + 1,
+				ClientRequests: val.ClientRequests + 1,
+			})
+
+			if val.Requests > h.RateLimit.BurstRate {
+
+				json.Write(w, APIxOBJ_Json_Status_Rsp{
+					Status: APIxOBJ_Json_Status{
+						Err: true,
+						Msg: "Sorry .. Rate limit exceeded .. Let's cooldown a bit ..",
+					},
+				}, http.StatusTooManyRequests)
+
+				h.Log.Add(logging.Entry{
+					Event: fmt.Sprintf("Client: %s - User: %s | Rate limit exceeded", h.ClientAddr, h.User),
+					Code:  logging.CONST_CODE_WARNING,
+				})
+
+				client[h.ClientAddr].Update(ClientxOBJ{
+					Stamp:          tStart,
+					Requests:       val.Requests,
+					ClientRequests: val.ClientRequests,
+				})
+
+				return true
+			}
+		} else {
+
+			client[h.ClientAddr].Update(ClientxOBJ{
+				Stamp:          tStart,
+				Requests:       1,
+				ClientRequests: val.ClientRequests + 1,
+			})
+		}
+	} else {
+
+		client.Add(ClientxOBJ{
+			ClientAddr:     h.ClientAddr,
+			Stamp:          tStart,
+			Requests:       1,
+			ClientRequests: 1,
+		})
+	}
+
+	return false
 }

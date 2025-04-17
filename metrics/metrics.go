@@ -2,6 +2,8 @@ package metrics
 
 import (
 	"api-gw/functions"
+	"api-gw/logging"
+	"encoding/json"
 	"fmt"
 	"math"
 	"time"
@@ -12,6 +14,16 @@ import (
 	"github.com/shirou/gopsutil/v3/load"
 	"github.com/shirou/gopsutil/v3/mem"
 )
+
+func Init(data FILExOBJ) {
+
+	logFile = logging.FILExOBJ{
+		MaxSize: data.MaxSize,
+		MaxDays: data.MaxDays,
+		Path:    data.Path,
+		Enabled: data.Enabled,
+	}
+}
 
 func (i *InfoObj) Init() {
 
@@ -80,6 +92,27 @@ func (s *StatsObj) Query(info *InfoObj) {
 			Used:      fmt.Sprint(humanize.Bytes(memory.Used)),
 		},
 		Time: time.Now().Format("2006-01-02 15:04:05"),
+	}
+
+	if logFile.Enabled {
+
+		obj := OBJxMetrics_Json{
+			Metrics: OBJxMetrics{
+				Stats: *s,
+				Info:  *info,
+			},
+			Updated: s.Time,
+		}
+
+		data, _ := json.Marshal(obj)
+
+		if err := logFile.Write(string(data)); err != nil {
+
+			appLog.Add(logging.Entry{
+				Event: fmt.Sprintf("Can not write logs to file '%s' - '%s'", logFile.Path, err.Error()),
+				Code:  logging.CONST_CODE_ERROR,
+			})
+		}
 	}
 }
 

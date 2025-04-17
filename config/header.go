@@ -6,7 +6,7 @@ type CFGxAPI struct {
 	CorsFilter string `json:"CorsFilter"`
 	Path       string `json:"Path"`
 	RateLimit  string `json:"RateLimit"`
-	Auth       bool
+	Auth       bool   `json:"Authorization"`
 }
 
 type CFG struct {
@@ -17,13 +17,15 @@ type CFG struct {
 
 type CFGxAPP struct {
 	Name          string `json:"Name"`
-	Env           string `json:"Env"`
+	Env           string `json:"Environment"`
 	ExitSyncTimer string `json:"ExitSyncTimer"`
 }
 
 type CFGxLOG struct {
-	MaxSize int `json:"MaxSize"`
-	MaxDays int `json:"MaxDays"`
+	Enabled bool   `json:"Enabled"`
+	Dir     string `json:"Directory"`
+	MaxSize int    `json:"MaxSize"`
+	MaxDays int    `json:"MaxDays"`
 }
 
 type CFGxAPI_Ratelimit struct {

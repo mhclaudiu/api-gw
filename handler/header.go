@@ -17,6 +17,7 @@ type APIxOBJ_Handler struct {
 	ClientAddr string
 	Log        logging.Log
 	RateLimit  APIxOBJ_Config_Ratelimit
+	User       string
 }
 
 type APIxOBJ_Json_Metrics struct {
