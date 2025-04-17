@@ -58,11 +58,11 @@ func (app *App) Hook() {
 
 		if exitSyncTimer > 0 {
 
-			fmt.Printf(" --> %s", colored("Closing and syncing resources .. please wait .."))
+			fmt.Printf(" --> %s", colored("Closing and syncing resources .. Please wait .."))
 
 		} else {
 
-			fmt.Printf(" --> %s", colored("Force exit detected .. please wait .."))
+			fmt.Printf(" --> %s", colored("Force exit detected .. Please wait .."))
 		}
 
 		fmt.Println()
