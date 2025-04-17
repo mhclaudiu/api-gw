@@ -1,6 +1,6 @@
 # API-GW
 
-A high-performance, scalable API Gateway built in Go, designed for microservices. It features:
+Scalable API Gateway built in Go, designed for microservices. It features:
 
 - Enhanced metrics (timestamps, response time, endpoint usage, request count)
 - JWT authentication
