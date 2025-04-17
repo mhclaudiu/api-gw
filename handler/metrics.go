@@ -17,12 +17,7 @@ func (h *APIxOBJ_Handler) QueryMetrics(w http.ResponseWriter, r *http.Request) {
 
 	totalRequests++
 
-	user := r.Context().Value("user")
-	if user == nil {
-		user = "N/A"
-	}
-
-	h.User = user.(string)
+	h.User = ParseUser(r.Context().Value("user"))
 
 	if h.LimitRate(w, tStart) {
 
@@ -39,7 +34,7 @@ func (h *APIxOBJ_Handler) QueryMetrics(w http.ResponseWriter, r *http.Request) {
 		json.Write(w, rsp, http.StatusCreated)
 
 		h.Log.Add(logging.Entry{
-			Event: fmt.Sprintf("Client: %s - User: %s | Response Time: %s", h.ClientAddr, user, rsp.ExecTime),
+			Event: fmt.Sprintf("Client: %s - User: %s | Response Time: %s", h.ClientAddr, h.User, rsp.ExecTime),
 			Code:  logging.CONST_CODE_INFO,
 		})
 
