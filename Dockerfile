@@ -13,7 +13,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o api-gw .
 # Image
 FROM debian:latest
 
-WORKDIR /root
+WORKDIR /app
 
 COPY --from=builder /app/api-gw .
 
